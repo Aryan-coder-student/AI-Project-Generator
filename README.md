@@ -32,6 +32,7 @@ Transform your project brainstorming with the **AI Project Idea Generator** - a 
 - Customizable output formats
 
 ## 🚀 Getting Started
+![image](https://github.com/user-attachments/assets/10a55509-f85f-4587-9787-98fc561c8b69)
 
 ### Prerequisites
 ```plaintext
@@ -126,6 +127,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Ready to generate your next big AI project idea? Let's go! 🚀
 
-[Get Started](#-getting-started) • [View Demo](https://example.com) • [Report Bug](https://github.com/your-username/ai-project-idea-generator/issues)
+[Get Started](#-getting-started) • [View Demo]([https://example.com](https://ai-project-generator-aic-bhopal.streamlit.app/))
 
 </div>

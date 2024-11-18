@@ -127,6 +127,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Ready to generate your next big AI project idea? Let's go! 🚀
 
-[Get Started](#-getting-started) • [View Demo]([(https://ai-project-generator-aic-bhopal.streamlit.app/)])
+[Get Started](#-getting-started) • [View Demo](https://ai-project-generator-aic-bhopal.streamlit.app/)
 
 </div>

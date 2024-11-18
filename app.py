@@ -7,9 +7,9 @@ from langchain.prompts import PromptTemplate
 import requests
 from typing import Optional
 
-# Load environment variables
-load_dotenv()
 
+load_dotenv()
+serpapi_data = {}
 class ProjectIdeaGenerator:
     def __init__(self):
         self.serpapi_key = os.getenv("SERPAPI_API_KEY")
@@ -67,7 +67,7 @@ class ProjectIdeaGenerator:
                 for paper in papers[:15]
             ])
         except requests.RequestException as e:
-            st.error(f"Error fetching papers: {str(e)}")
+            st.error(f"Error fetching papers: {str(e)}") 
             return "Failed to fetch papers. Please try again later."
 
     def generate_ideas(self, topic: str, complexity: str, num_projects: int, 
@@ -75,25 +75,57 @@ class ProjectIdeaGenerator:
         """Generate project ideas using the LLM"""
         try:
             idea_prompt = PromptTemplate(
-                input_variables=["topic", "complexity", "num_projects", "serpapi_data", "papers_data"],
-                template="""
-                You are an AI project generator. Based on the topic "{topic}" with {complexity} complexity level, generate {num_projects} unique project ideas.
-                
-                Context from web research:
-                {serpapi_data}
-                
-                Related research papers:
-                {papers_data}
-                
-                For each project idea, Output:
-                1. A descriptive title formatted as a Markdown heading (H2)
-                2. A concise project description
-                3. Key implementation steps (data collection, model development, evaluation)
-                4. Deployment strategy (web app, mobile app, API, etc.)
-                
-                Output using proper Markdown after every project , syntax for better readability.
-                """
-            )
+            input_variables=[
+                "topic", 
+                "complexity", 
+                "num_projects", 
+                "serpapi_data", 
+                "papers_data"
+            ],
+            template="""
+            You are an AI-powered freelance client simulation generator.
+            
+            🎯 Objective: Generate unique project briefs for the topic "{topic}"
+            
+            ## Generation Parameters
+            - Complexity Level: {complexity}
+            - Number of Projects: {num_projects}
+            
+            ## Context Sources
+            1. **Web Research Context**: {serpapi_data}
+            2. **Academic Research Papers**: {papers_data}
+            
+            ## Project Brief Requirements
+            
+            ### 1. Descriptive Title
+            - Format: Markdown Heading (H2)
+            - Capture project essence concisely
+            
+            ### 2. Problem Statement
+            - Written in authentic client voice
+            - Include:
+            * Specific need
+            * Underlying motivation
+            * Clear expectations
+            
+            ### 3. Key Deliverables
+            - Explicitly list expected outcomes
+            - Ensure clarity and measurability
+            
+            ### 4. Project Scope and Constraints
+            - Timeline specifications
+            - Budget limitations
+            - Platform or technology preferences
+            
+            ### 5. Recommended Tools/Techniques
+            - Client-suggested methodologies
+            - Preferred technological approach
+            
+            ## Output: 
+            - Markdown for enhanced readability
+            - Add A divider after every project
+            """
+        )
             
             chain_result = idea_prompt | self.llm
             

@@ -59,7 +59,7 @@ def fetch_paperswithcode_data(topic):
             return "No papers found for the given topic."
         return "\n".join([
             f"{paper.get('paper', {}).get('title', 'No Title')}: {paper.get('paper', {}).get('url_abs', 'No URL')}"
-            for paper in papers[:5]
+            for paper in papers[:15]
         ])
     else:
         return f"API error with status code {response.status_code}"

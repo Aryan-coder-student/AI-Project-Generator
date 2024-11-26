@@ -58,7 +58,7 @@ class ProjectIdeaGenerator:
             if not papers:
                 return "No papers found for the given topic."
                 
-            return "\n".join([
+            return "\n".join([ 
                 f"- {paper.get('paper', {}).get('title', 'No Title')}\n  {paper.get('paper', {}).get('url_abs', 'No URL')}"
                 for paper in papers[:15]
             ])
@@ -71,7 +71,7 @@ class ProjectIdeaGenerator:
         try:
             idea_prompt = PromptTemplate(
                 input_variables=["topic", "complexity", "num_projects", "serpapi_data", "papers_data"],
-                template="""
+                template=""" 
                     🎯 Generate project ideas for the topic "{topic}" with the complexity level: {complexity}.
                     Context from web: {serpapi_data}
                     Context from papers: {papers_data}
@@ -91,7 +91,7 @@ class ProjectIdeaGenerator:
             return None
 
 def main():
-    # Page Configuration with a dark theme
+    # Page Configuration with a modern layout
     st.set_page_config(
         page_title="AI Project Idea Generator",
         page_icon="🚀",
@@ -99,12 +99,13 @@ def main():
         initial_sidebar_state="expanded"
     )
 
-    # Custom CSS Styling
+    # Custom CSS Styling for a sleek UI
     st.markdown("""
         <style>
             body {
-                font-family: 'Arial', sans-serif;
+                font-family: 'Roboto', sans-serif;
                 background-color: #F1F1F1;
+                color: #333;
             }
             .main {
                 background-color: #ffffff;
@@ -118,15 +119,28 @@ def main():
             }
             h1 {
                 color: #4CAF50;
+                font-size: 36px;
+                font-weight: bold;
             }
             .stButton>button {
                 background-color: #4CAF50;
                 color: white;
-                border-radius: 5px;
-                padding: 12px;
+                border-radius: 8px;
+                padding: 12px 24px;
+                font-weight: bold;
             }
             .stButton>button:hover {
                 background-color: #45a049;
+            }
+            .stSlider {
+                background-color: #FFFFFF;
+                border-radius: 5px;
+                padding: 8px;
+            }
+            .stTextArea textarea {
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px;
             }
         </style>
     """, unsafe_allow_html=True)
@@ -142,7 +156,7 @@ def main():
     try:
         generator = ProjectIdeaGenerator()
 
-        # Sidebar Inputs with improved styling
+        # Sidebar Inputs with modern design
         with st.sidebar:
             st.header("🔧 Configuration")
             topic = st.text_area(

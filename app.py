@@ -58,26 +58,20 @@ class ProjectIdeaGenerator:
             if not papers:
                 return "No papers found for the given topic."
                 
-            return "\n".join([ 
-                f"- {paper.get('paper', {}).get('title', 'No Title')}\n  {paper.get('paper', {}).get('url_abs', 'No URL')}"
-                for paper in papers[:15]
-            ])
+            return "\n".join([f"- {paper.get('paper', {}).get('title', 'No Title')}\n  {paper.get('paper', {}).get('url_abs', 'No URL')}" for paper in papers[:15]])
         except requests.RequestException as e:
             st.error(f"Error fetching papers: {str(e)}") 
             return "Failed to fetch papers. Please try again later."
 
-    def generate_ideas(self, topic: str, complexity: str, num_projects: int, 
-                      serpapi_data: str, papers_data: str) -> Optional[str]:
+    def generate_ideas(self, topic: str, complexity: str, num_projects: int, serpapi_data: str, papers_data: str) -> Optional[str]:
         try:
             idea_prompt = PromptTemplate(
                 input_variables=["topic", "complexity", "num_projects", "serpapi_data", "papers_data"],
-                template=""" 
-                    🎯 Generate project ideas for the topic "{topic}" with the complexity level: {complexity}.
-                    Context from web: {serpapi_data}
-                    Context from papers: {papers_data}
-                """
+                template="""🎯 Generate project ideas for the topic "{topic}" with the complexity level: {complexity}.
+Context from web: {serpapi_data}
+Context from papers: {papers_data}
+"""
             )
-            
             chain_result = idea_prompt | self.llm
             return chain_result.invoke(input={
                 "topic": topic,
@@ -91,56 +85,48 @@ class ProjectIdeaGenerator:
             return None
 
 def main():
-    # Page Configuration with a modern layout
-    st.set_page_config(
-        page_title="AI Project Idea Generator",
-        page_icon="🚀",
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
+    # Page Configuration with a dark theme and custom icon
+    st.set_page_config(page_title="AI Project Idea Generator", page_icon="🧠", layout="wide")
 
-    # Custom CSS Styling for a sleek UI
+    # Custom CSS Styling
     st.markdown("""
         <style>
             body {
-                font-family: 'Roboto', sans-serif;
-                background-color: #F1F1F1;
+                font-family: 'Arial', sans-serif;
+                background-color: #f4f4f9;
                 color: #333;
             }
             .main {
                 background-color: #ffffff;
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                padding: 30px;
+                border-radius: 12px;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+                margin-top: 20px;
             }
             .sidebar {
-                background-color: #1f2a40;
+                background-color: #2f3c56;
                 color: white;
             }
             h1 {
-                color: #4CAF50;
-                font-size: 36px;
+                color: #2E8B57;
                 font-weight: bold;
             }
             .stButton>button {
                 background-color: #4CAF50;
                 color: white;
-                border-radius: 8px;
+                border-radius: 10px;
                 padding: 12px 24px;
-                font-weight: bold;
+                font-size: 16px;
+                border: none;
             }
             .stButton>button:hover {
                 background-color: #45a049;
             }
-            .stSlider {
-                background-color: #FFFFFF;
-                border-radius: 5px;
-                padding: 8px;
+            .stSlider>div>div>div>div>div {
+                background-color: #2E8B57;
             }
-            .stTextArea textarea {
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                padding: 10px;
+            .stTextArea>div>div>textarea {
+                border-radius: 8px;
             }
         </style>
     """, unsafe_allow_html=True)
@@ -149,14 +135,14 @@ def main():
     st.title("🚀 AI Project Idea Generator")
     st.markdown("""
         Welcome to the **AI Project Idea Generator**!  
-        Discover innovative project ideas with insights from web research and academic papers.  
+        Discover innovative project ideas and gain insights from web research and academic papers.  
         Customize the complexity and number of ideas to suit your needs.  
     """)
 
     try:
         generator = ProjectIdeaGenerator()
 
-        # Sidebar Inputs with modern design
+        # Sidebar Inputs with improved styling
         with st.sidebar:
             st.header("🔧 Configuration")
             topic = st.text_area(

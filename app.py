@@ -7,8 +7,9 @@ from langchain.prompts import PromptTemplate
 import requests
 from typing import Optional
 
-load_dotenv()
 
+load_dotenv()
+serpapi_data = {}
 class ProjectIdeaGenerator:
     def __init__(self):
         self.serpapi_key = os.getenv("SERPAPI_API_KEY")
@@ -82,7 +83,7 @@ class ProjectIdeaGenerator:
                 "papers_data"
             ],
             template="""
-            You are an AI-powered project idea generator.
+            You are an AI-powered freelance client simulation generator.
             
             🎯 Objective: Generate unique project briefs for the topic "{topic}"
             
@@ -101,28 +102,28 @@ class ProjectIdeaGenerator:
             - Capture project essence concisely
             
             ### 2. Problem Statement
-            - Written in authentic innovator's voice
+            - Written in authentic client voice
             - Include:
-            * Specific technological challenge
-            * Potential impact
-            * Innovative approach
+            * Specific need
+            * Underlying motivation
+            * Clear expectations
             
             ### 3. Key Deliverables
-            - Explicitly list expected project outcomes
-            - Ensure clarity and technical depth
+            - Explicitly list expected outcomes
+            - Ensure clarity and measurability
             
             ### 4. Project Scope and Constraints
-            - Estimated development timeline
-            - Potential technological challenges
-            - Recommended skill set
+            - Timeline specifications
+            - Budget limitations
+            - Platform or technology preferences
             
-            ### 5. Innovative Techniques
-            - Cutting-edge methodologies
-            - Potential technological approaches
+            ### 5. Recommended Tools/Techniques
+            - Client-suggested methodologies
+            - Preferred technological approach
             
             ## Output: 
             - Markdown for enhanced readability
-            - Add a divider after every project
+            - Add A divider after every project
             """
         )
             
@@ -140,57 +141,18 @@ class ProjectIdeaGenerator:
             return None
 
 def main():
-    # Custom CSS for enhanced styling
-    st.markdown("""
-    <style>
-    .main-container {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        padding: 2rem;
-    }
-    .sidebar {
-        background-color: white;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        padding: 1.5rem;
-    }
-    .stButton > button {
-        background-color: #4B0082 !important;
-        color: white !important;
-        border-radius: 10px !important;
-    }
-    .stButton > button:hover {
-        background-color: #6A5ACD !important;
-    }
-    .title-container {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-    .title-container img {
-        margin-right: 1rem;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
     # Page Configuration
     st.set_page_config(
-        page_title="🚀 InnovaAI: Project Idea Generator",
+        page_title="AI Project Idea Generator",
         page_icon="🚀",
         layout="wide",
     )
 
     # Application Header
+    st.title("🚀 AI Project Idea Generator")
     st.markdown("""
-    <div class="title-container">
-        <img src="https://img.icons8.com/nolan/64/rocket.png" alt="Rocket Icon">
-        <h1>InnovaAI: Project Idea Generator</h1>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    Welcome to **InnovaAI**! 🌟 
-    Discover cutting-edge project ideas powered by artificial intelligence. 
-    Enter a topic and let our AI help you brainstorm innovative concepts.
+        Welcome to the **AI Project Idea Generator**!  
+        This tool leverages AI to help you discover innovative and practical project ideas based on your topic of interest.  
     """)
 
     try:
@@ -198,51 +160,29 @@ def main():
 
         # Sidebar Inputs
         with st.sidebar:
-            st.header("🔧 Project Configuration")
-            
-            # Topic Input with Enhanced Styling
+            st.header("🔧 Configuration")
             topic = st.text_area(
                 "Enter your topic of interest:",
-                placeholder="e.g., AI for climate change, quantum computing, sustainable tech",
-                height=150,
-                help="Be specific to get more targeted project ideas!"
+                placeholder="e.g., AI for sustainable agriculture, healthcare innovation",
+                height=120,
             )
-
-            # Complexity Selector with Custom Styling
+            number_of_projects = st.slider("Number of project ideas:", 1, 10, 5)
             project_complexity = st.select_slider(
-                "Project Complexity:",
+                "Project Complexity Level:",
                 options=["Beginner", "Intermediate", "Advanced"],
-                value="Intermediate",
-                help="Choose the technical complexity of your project ideas"
+                value="Intermediate"
             )
+            generate_button = st.button("Generate Ideas 🎯")
 
-            # Number of Projects Slider
-            number_of_projects = st.slider(
-                "Number of Project Ideas:", 
-                min_value=1, 
-                max_value=10, 
-                value=5,
-                help="Select how many unique project ideas you want to generate"
-            )
-
-            # Generate Button with Enhanced Interaction
-            generate_button = st.button(
-                "Generate Innovative Ideas 💡", 
-                help="Click to unleash AI-powered project creativity!"
-            )
-
-        # Main Content Area with Tabs
         if topic:
-            tab1, tab2 = st.tabs(["💡 Generated Ideas", "🔍 Research Insights"])
+            tab1, tab2 = st.tabs(["💡 Project Ideas", "📚 Resources"])
             
             with tab1:
                 if generate_button:
-                    with st.spinner("Generating innovative project ideas..."):
-                        # Fetch supplementary data
+                    with st.spinner("Generating ideas..."):
                         serpapi_data = ProjectIdeaGenerator.fetch_related_info(topic, generator.serpapi_key)
                         papers_data = ProjectIdeaGenerator.fetch_paperswithcode_data(topic)
                         
-                        # Generate project ideas
                         result = generator.generate_ideas(
                             topic=topic,
                             complexity=project_complexity,
@@ -252,44 +192,38 @@ def main():
                         )
                         
                         if result:
-                            st.subheader(f"🚀 AI-Generated Project Ideas for {topic}")
+                            st.subheader(f"🎯 Generated Project Ideas ({number_of_projects})")
                             st.markdown(result)
                             
-                            # Download Button with Enhanced Styling
                             st.download_button(
-                                label="📥 Download Project Ideas",
+                                label="📥 Download Ideas",
                                 data=result,
-                                file_name="innovative_project_ideas.md",
-                                mime="text/markdown",
-                                help="Download your AI-generated project ideas"
+                                file_name="project_ideas.md",
+                                mime="text/markdown"
                             )
                 else:
-                    st.info("👈 Configure your project parameters in the sidebar and click 'Generate Innovative Ideas'!")
+                    st.info("👈 Enter a topic in the sidebar and click **'Generate Ideas'** to get started!")
 
             with tab2:
-                st.subheader("🔬 Research Context")
+                st.subheader("📚 Research Resources")
                 
-                col1, col2 = st.columns(2)
+                if serpapi_data:
+                    st.markdown("### 🔍 Web Research Results")
+                    st.markdown(f"```\n{serpapi_data}\n```")
                 
-                with col1:
-                    if serpapi_data:
-                        st.markdown("#### 🌐 Web Research Insights")
-                        st.code(serpapi_data, language="text")
-                
-                with col2:
-                    if papers_data:
-                        st.markdown("#### 📄 Academic Research Papers")
-                        st.markdown(papers_data)
+                if papers_data:
+                    st.markdown("### 📄 Research Papers")
+                    st.markdown(papers_data)
         else:
-            st.info("👈 Enter a topic in the sidebar to generate innovative project ideas!")
+            st.info("👈 Enter a topic in the sidebar to view resources and generate ideas.")
 
     except Exception as e:
-        st.error(f"An unexpected error occurred: {str(e)}")
-        st.info("Please check your configuration and try again.")
+        st.error(f"An error occurred: {str(e)}")
+        st.info("Please check your API keys and try again.")
 
-    # Footer with Tech Attribution
+    # Footer
     st.markdown("---")
-    st.markdown("Crafted with ❤️ using **Streamlit**, **LangChain**, and **Groq LLM**")
+    st.markdown("Built with ❤️ using **Streamlit**, **LangChain**, and **Groq LLM**")
 
 if __name__ == "__main__":
     main()

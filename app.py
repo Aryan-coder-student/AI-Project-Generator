@@ -7,9 +7,9 @@ from langchain.prompts import PromptTemplate
 import requests
 from typing import Optional
 
-
 load_dotenv()
 serpapi_data = {}
+
 class ProjectIdeaGenerator:
     def __init__(self):
         self.serpapi_key = os.getenv("SERPAPI_API_KEY")
@@ -158,13 +158,14 @@ def main():
     try:
         generator = ProjectIdeaGenerator()
 
-        # Sidebar Inputs
+        # Sidebar Inputs with enhanced styling
         with st.sidebar:
             st.header("🔧 Configuration")
             topic = st.text_area(
                 "Enter your topic of interest:",
                 placeholder="e.g., AI for sustainable agriculture, healthcare innovation",
                 height=120,
+                label_visibility="collapsed"
             )
             number_of_projects = st.slider("Number of project ideas:", 1, 10, 5)
             project_complexity = st.select_slider(
@@ -221,7 +222,7 @@ def main():
         st.error(f"An error occurred: {str(e)}")
         st.info("Please check your API keys and try again.")
 
-    # Footer
+    # Footer with clean styling
     st.markdown("---")
     st.markdown("Built with ❤️ using **Streamlit**, **LangChain**, and **Groq LLM**")
 

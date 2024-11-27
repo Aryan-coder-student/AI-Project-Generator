@@ -122,8 +122,8 @@ class ProjectIdeaGenerator:
             - Preferred technological approach
             
             ## Output: 
-            - output in proper heading , subheading ,points 
-            - output should be easy readable through eye 
+            - output in proper heading , subheading ,points , like project title should be in proper haeding and in different color
+            - make sub heading in indentations 
             - Add A divider after every project
             """
         )

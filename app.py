@@ -350,7 +350,7 @@ def main():
             st.info("👈 Input exploration vector to activate CyberForge")
 
     except Exception as e:
-        continue
+        pass
 
     # Footer with cyberpunk flair
     st.markdown("---")

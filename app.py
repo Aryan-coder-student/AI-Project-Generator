@@ -97,10 +97,6 @@ class ProjectIdeaGenerator:
             
             ## Project Brief Requirements
             
-            ### 1. Descriptive Title
-            - Format: Markdown Heading (H2)
-            - Capture project essence concisely
-            
             ### 2. Problem Statement
             - Written in authentic client voice
             - Include:
@@ -122,7 +118,7 @@ class ProjectIdeaGenerator:
             - Preferred technological approach
             
             ## Output: 
-            - Markdown for enhanced readability
+            - Output proper markdown , lik make Title of every project as heading
             - Add A divider after every project
             """
         )

@@ -124,6 +124,7 @@ class ProjectIdeaGenerator:
             ## Output: 
             - output in proper heading , subheading ,points , like project title should be in proper haeding and in different color
             - make sub heading in indentations 
+            - ouput in only in markdown 
             - Add A divider after every project
             """
         )

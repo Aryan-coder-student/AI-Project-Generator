@@ -6,8 +6,8 @@ from langchain_groq import ChatGroq
 from langchain.prompts import PromptTemplate
 import requests
 from typing import Optional
+import base64
 
-# Load environment variables
 load_dotenv()
 
 class ProjectIdeaGenerator:
@@ -75,15 +75,57 @@ class ProjectIdeaGenerator:
         """Generate project ideas using the LLM"""
         try:
             idea_prompt = PromptTemplate(
-                input_variables=[
-                    "topic", 
-                    "complexity", 
-                    "num_projects", 
-                    "serpapi_data", 
-                    "papers_data"
-                ],
-                template="""Your prompt template here"""
-            )
+            input_variables=[
+                "topic", 
+                "complexity", 
+                "num_projects", 
+                "serpapi_data", 
+                "papers_data"
+            ],
+            template="""
+            You are an AI-powered freelance client simulation generator.
+            
+            🎯 Objective: Generate unique project briefs for the topic "{topic}"
+            
+            ## Generation Parameters
+            - Complexity Level: {complexity}
+            - Number of Projects: {num_projects}
+            
+            ## Context Sources
+            1. **Web Research Context**: {serpapi_data}
+            2. **Academic Research Papers**: {papers_data}
+            
+            ## Project Brief Requirements
+            
+            ### 1. Descriptive Title
+            - Format: Markdown Heading (H2)
+            - Capture project essence concisely
+            
+            ### 2. Problem Statement
+            - Written in authentic client voice
+            - Include:
+            * Specific need
+            * Underlying motivation
+            * Clear expectations
+            
+            ### 3. Key Deliverables
+            - Explicitly list expected outcomes
+            - Ensure clarity and measurability
+            
+            ### 4. Project Scope and Constraints
+            - Timeline specifications
+            - Budget limitations
+            - Platform or technology preferences
+            
+            ### 5. Recommended Tools/Techniques
+            - Client-suggested methodologies
+            - Preferred technological approach
+            
+            ## Output: 
+            - Markdown for enhanced readability
+            - Add A divider after every project
+            """
+        )
             
             chain_result = idea_prompt | self.llm
             
@@ -108,17 +150,98 @@ def main():
     )
 
     # Cyberpunk-Inspired Custom CSS
-    st.markdown("""<style>/* Your CSS here */</style>""", unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+    /* Cyberpunk Background and Base Styling */
+    .stApp {
+        background-color: #0A0A1A;
+        background-image: 
+            linear-gradient(rgba(10, 10, 26, 0.9), rgba(10, 10, 26, 0.9)),
+            repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.03) 0px, rgba(0, 255, 255, 0.03) 1px, transparent 1px, transparent 4px);
+        color: #00FFD4;
+    }
+
+    /* Sidebar Styling */
+    [data-testid="stSidebar"] {
+        background-color: #111127;
+        border-right: 2px solid #00FFD4;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4, h5, h6 {
+        color: #00FFD4 !important;
+        text-shadow: 0 0 10px rgba(0, 255, 212, 0.5);
+    }
+
+    /* Text Styling */
+    .stMarkdown, .stTextArea, .stTextInput {
+        color: #00FFD4 !important;
+    }
+
+    /* Button Cyberpunk Styling */
+    .stButton>button {
+        background-color: #FF1493 !important;
+        color: black !important;
+        border: 2px solid #00FFD4 !important;
+        box-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+        transition: all 0.3s ease;
+    }
+    .stButton>button:hover {
+        background-color: #00FFD4 !important;
+        color: #0A0A1A !important;
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 255, 212, 0.7);
+    }
+
+    /* Tabs Cyberpunk Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        background-color: #111127;
+        border-bottom: 2px solid #00FFD4;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: #0A0A1A;
+        color: #FF1493;
+        border: 2px solid #FF1493;
+        margin: 5px;
+        padding: 10px;
+        transition: all 0.3s ease;
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        background-color: #FF1493;
+        color: #0A0A1A;
+    }
+    .stTabs [data-baseweb="tab"][data-selected="true"] {
+        background-color: #00FFD4;
+        color: #0A0A1A;
+        border-color: #00FFD4;
+    }
+
+    /* Code Block Cyberpunk Styling */
+    .stCodeBlock {
+        background-color: #111127 !important;
+        color: #00FFD4 !important;
+        border: 2px solid #FF1493 !important;
+    }
+
+    /* Info and Error Boxes */
+    .stAlert {
+        background-color: #111127;
+        color: #00FFD4;
+        border: 2px solid #FF1493;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
     # Cyberpunk Header
-    st.markdown("<h1 style='text-align: center; color: #00FFD4;'>🌐 CyberForge: Project Nexus</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #00FFD4; text-shadow: 0 0 10px rgba(0, 255, 212, 0.5);'>🌐 CyberForge: Project Nexus</h1>", unsafe_allow_html=True)
+    st.markdown("""
+        <p style='text-align: center; color: #FF1493;'>
+        Synthesize Innovative Project Vectors | AI-Powered Idea Generation Matrix
+        </p>
+    """, unsafe_allow_html=True)
 
     try:
         generator = ProjectIdeaGenerator()
-
-        # Initialize `serpapi_data` and `papers_data` to default values
-        serpapi_data = ""
-        papers_data = ""
 
         # Sidebar with cyberpunk theme
         with st.sidebar:
@@ -199,14 +322,44 @@ def main():
                         st.markdown(papers_data)
 
             with tab3:
-                st.markdown("Your protocol here")
+                st.markdown("""
+                ### 🔬 CyberForge Operational Protocols
 
+                1. **Input Vector**: 
+                   - Inject technological exploration domain
+                   - Exemplars: "Quantum Interfaces", "Neuro-Computational Systems"
+
+                2. **Configuration Calibration**:
+                   - Modulate project generation density
+                   - Adjust complexity synchronization level
+
+                3. **Concept Initialization**:
+                   - Activate "Concept Generator"
+                   - AI synthesizes unique project matrices
+
+                4. **Concept Exploration**:
+                   - Visualize generated project vectors
+                   - Export for further analysis
+
+                #### Optimization Vectors:
+                - Precision in input increases conceptual fidelity
+                - Experiment with complexity modulation
+                - Leverage data streams for refined ideation
+                """)
         else:
             st.info("👈 Input exploration vector to activate CyberForge")
 
     except Exception as e:
         st.error(f"🚨 System Anomaly Detected: {str(e)}")
         st.info("Verify system configurations and reinitialize")
+
+    # Footer with cyberpunk flair
+    st.markdown("---")
+    st.markdown("""
+    <div style='text-align: center; color: #FF1493;'>
+    Engineered in the Quantum Realm | Streamlit • LangChain • Groq Neural Network
+    </div>
+    """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

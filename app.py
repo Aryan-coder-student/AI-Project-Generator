@@ -122,7 +122,8 @@ class ProjectIdeaGenerator:
             - Preferred technological approach
             
             ## Output: 
-            - Markdown for enhanced readability
+            - output in proper heading , subheading ,points 
+            - output should be easy readable through eye 
             - Add A divider after every project
             """
         )

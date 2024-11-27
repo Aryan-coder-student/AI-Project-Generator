@@ -6,179 +6,225 @@ from langchain_groq import ChatGroq
 from langchain.prompts import PromptTemplate
 import requests
 from typing import Optional
-import time
 
-# Custom CSS for modern, clean UI
-def apply_custom_styling():
-    st.markdown("""
-    <style>
-        /* Global App Styling */
-        .stApp {
-            background-color: #f4f6f9;
-            font-family: 'Inter', 'Roboto', sans-serif;
-        }
-        
-        /* Sidebar Enhancements */
-        .css-1aumxhk {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-        
-        /* Button Styling */
-        .stButton>button {
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-        .stButton>button:hover {
-            background-color: #2563eb;
-            transform: scale(1.05);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        
-        /* Input and Text Area Styling */
-        .stTextArea textarea {
-            border: 2px solid #e0e4eb;
-            border-radius: 10px;
-            padding: 12px;
-            background-color: #f9fafb;
-        }
-        
-        /* Slider Styling */
-        .stSlider > div > div > div > div {
-            background-color: #3b82f6;
-            border-radius: 10px;
-        }
-        
-        /* Tabs Styling */
-        .stTabs [data-baseweb="tab-list"] {
-            background-color: #f4f6f9;
-            border-radius: 12px;
-        }
-        .stTabs [data-baseweb="tab"] {
-            color: #4b5563;
-            padding: 10px 15px;
-            transition: all 0.3s ease;
-        }
-        .stTabs [data-baseweb="tab"][aria-selected="true"] {
-            background-color: #3b82f6;
-            color: white;
-            border-radius: 8px;
-        }
-    </style>
-    """, unsafe_allow_html=True)
+load_dotenv()
+serpapi_data = {}
 
 class ProjectIdeaGenerator:
     def __init__(self):
-        load_dotenv()
         self.serpapi_key = os.getenv("SERPAPI_API_KEY")
         self.groq_api_key = os.getenv("GROQ_API_KEY")
         
         if not self.serpapi_key or not self.groq_api_key:
-            raise ValueError("🚨 Missing API keys. Please check your .env file.")
+            raise ValueError("Missing required API keys in .env file")
         
-        self.serpapi = SerpAPIWrapper(serpapi_api_key=self.serpapi_key)
-        self.llm = ChatGroq(
+        # Initialize resources directly in constructor
+        self.serpapi = self._init_serpapi()
+        self.llm = self._init_llm()
+
+    def _init_serpapi(self):
+        """Initialize SerpAPI wrapper"""
+        return SerpAPIWrapper(serpapi_api_key=self.serpapi_key)
+
+    def _init_llm(self):
+        """Initialize Groq LLM"""
+        return ChatGroq(
             model="llama-3.1-8b-instant",
             temperature=0.7,
             max_retries=2,
             api_key=self.groq_api_key
         )
 
+    @staticmethod
+    @st.cache_data(ttl=3600)  # Cache for 1 hour
+    def fetch_related_info(topic: str, serpapi_key: str) -> str:
+        """Fetch related information using SerpAPI"""
+        try:
+            serpapi = SerpAPIWrapper(serpapi_api_key=serpapi_key)
+            query = f"project ideas for {topic}"
+            return serpapi.run(query)
+        except Exception as e:
+            st.error(f"Error fetching related information: {str(e)}")
+            return ""
+
+    @staticmethod
+    @st.cache_data(ttl=3600)  # Cache for 1 hour
+    def fetch_paperswithcode_data(topic: str) -> str:
+        """Fetch papers from Papers with Code API"""
+        try:
+            url = f"https://paperswithcode.com/api/v1/search/?q={topic}"
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            
+            data = response.json()
+            papers = data.get("results", [])
+            
+            if not papers:
+                return "No papers found for the given topic."
+                
+            return "\n".join([
+                f"- {paper.get('paper', {}).get('title', 'No Title')}\n  {paper.get('paper', {}).get('url_abs', 'No URL')}"
+                for paper in papers[:15]
+            ])
+        except requests.RequestException as e:
+            st.error(f"Error fetching papers: {str(e)}") 
+            return "Failed to fetch papers. Please try again later."
+
+    def generate_ideas(self, topic: str, complexity: str, num_projects: int, 
+                      serpapi_data: str, papers_data: str) -> Optional[str]:
+        """Generate project ideas using the LLM"""
+        try:
+            idea_prompt = PromptTemplate(
+            input_variables=[
+                "topic", 
+                "complexity", 
+                "num_projects", 
+                "serpapi_data", 
+                "papers_data"
+            ],
+            template="""
+            You are an AI-powered freelance client simulation generator.
+            
+            🎯 Objective: Generate unique project briefs for the topic "{topic}"
+            
+            ## Generation Parameters
+            - Complexity Level: {complexity}
+            - Number of Projects: {num_projects}
+            
+            ## Context Sources
+            1. **Web Research Context**: {serpapi_data}
+            2. **Academic Research Papers**: {papers_data}
+            
+            ## Project Brief Requirements
+            
+            ### 1. Descriptive Title
+            - Format: Markdown Heading (H2)
+            - Capture project essence concisely
+            
+            ### 2. Problem Statement
+            - Written in authentic client voice
+            - Include:
+            * Specific need
+            * Underlying motivation
+            * Clear expectations
+            
+            ### 3. Key Deliverables
+            - Explicitly list expected outcomes
+            - Ensure clarity and measurability
+            
+            ### 4. Project Scope and Constraints
+            - Timeline specifications
+            - Budget limitations
+            - Platform or technology preferences
+            
+            ### 5. Recommended Tools/Techniques
+            - Client-suggested methodologies
+            - Preferred technological approach
+            
+            ## Output: 
+            - Markdown for enhanced readability
+            - Add A divider after every project
+            """
+        )
+            
+            chain_result = idea_prompt | self.llm
+            
+            return chain_result.invoke(input={
+                "topic": topic,
+                "complexity": complexity,
+                "num_projects": num_projects,
+                "serpapi_data": serpapi_data,
+                "papers_data": papers_data
+            }).content
+        except Exception as e:
+            st.error(f"Error generating ideas: {str(e)}")
+            return None
+
 def main():
-    # Page Configuration with Enhanced Styling
+    # Page Configuration
     st.set_page_config(
-        page_title="🚀 AI Project Idea Generator",
+        page_title="AI Project Idea Generator",
         page_icon="🚀",
         layout="wide",
     )
-    
-    # Apply Custom Styling
-    apply_custom_styling()
 
-    # Enhanced Header with Gradient and Animation
+    # Application Header
+    st.title("🚀 AI Project Idea Generator")
     st.markdown("""
-    <div style='background: linear-gradient(90deg, #3b82f6, #7c3aed);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                font-size: 2.5em;
-                font-weight: 800;
-                text-align: center;
-                margin-bottom: 20px;
-                animation: gradient-animation 3s ease infinite;'>
-        AI Project Idea Generator
-    </div>
-    """, unsafe_allow_html=True)
+        Welcome to the **AI Project Idea Generator**!  
+        This tool leverages AI to help you discover innovative and practical project ideas based on your topic of interest.  
+    """)
 
-    # Sidebar with Enhanced Layout
-    with st.sidebar:
-        st.header("🔧 Project Configuration")
-        
-        # Topic Input with Placeholder and Validation
-        topic = st.text_area(
-            "Enter your topic of interest:",
-            placeholder="e.g., AI for sustainable agriculture, healthcare innovation",
-            height=120
-        )
-        
-        # Complexity Selector with Tooltips
-        project_complexity = st.select_slider(
-            "Project Complexity Level 🧩",
-            options=["Beginner", "Intermediate", "Advanced"],
-            value="Intermediate"
-        )
-        
-        # Informative Complexity Tooltip
-        st.info("""
-        🔍 Complexity Guide:
-        • Beginner: Simple projects
-        • Intermediate: Moderate challenges
-        • Advanced: Cutting-edge concepts
-        """)
-        
-        # Number of Projects Slider with Enhanced Style
-        number_of_projects = st.slider(
-            "Number of Project Ideas", 
-            1, 10, 5, 
-            help="Select how many project ideas you want to generate"
-        )
-        
-        # Generate Button with Engaging Style
-        generate_button = st.button("Generate Ideas 🎯", use_container_width=True)
+    try:
+        generator = ProjectIdeaGenerator()
 
-    # Main Content Area
-    if topic and generate_button:
-        # Input Validation
-        if len(topic.strip()) < 3:
-            st.warning("🚨 Please enter a more specific topic (min 3 characters)")
-        else:
-            # Tabs for organized display
-            tab1, tab2 = st.tabs(["💡 Project Ideas", "📚 Research Resources"])
+        # Sidebar Inputs with enhanced styling
+        with st.sidebar:
+            st.header("🔧 Configuration")
+            topic = st.text_area(
+                "Enter your topic of interest:",
+                placeholder="e.g., AI for sustainable agriculture, healthcare innovation",
+                height=120,
+                label_visibility="collapsed"
+            )
+            number_of_projects = st.slider("Number of project ideas:", 1, 10, 5)
+            project_complexity = st.select_slider(
+                "Project Complexity Level:",
+                options=["Beginner", "Intermediate", "Advanced"],
+                value="Intermediate"
+            )
+            generate_button = st.button("Generate Ideas 🎯")
+
+        if topic:
+            tab1, tab2 = st.tabs(["💡 Project Ideas", "📚 Resources"])
             
             with tab1:
-                with st.spinner("🧠 Generating innovative project ideas..."):
-                    # Simulated loading for better UX
-                    time.sleep(1)
-                    
-                    # Rest of your existing generation logic here
-                    # ... (keep your existing ProjectIdeaGenerator methods)
+                if generate_button:
+                    with st.spinner("Generating ideas..."):
+                        serpapi_data = ProjectIdeaGenerator.fetch_related_info(topic, generator.serpapi_key)
+                        papers_data = ProjectIdeaGenerator.fetch_paperswithcode_data(topic)
+                        
+                        result = generator.generate_ideas(
+                            topic=topic,
+                            complexity=project_complexity,
+                            num_projects=number_of_projects,
+                            serpapi_data=serpapi_data,
+                            papers_data=papers_data
+                        )
+                        
+                        if result:
+                            st.subheader(f"🎯 Generated Project Ideas ({number_of_projects})")
+                            st.markdown(result)
+                            
+                            st.download_button(
+                                label="📥 Download Ideas",
+                                data=result,
+                                file_name="project_ideas.md",
+                                mime="text/markdown"
+                            )
+                else:
+                    st.info("👈 Enter a topic in the sidebar and click **'Generate Ideas'** to get started!")
 
-    # Footer with Modern Design
+            with tab2:
+                st.subheader("📚 Research Resources")
+                
+                if serpapi_data:
+                    st.markdown("### 🔍 Web Research Results")
+                    st.markdown(f"```\n{serpapi_data}\n```")
+                
+                if papers_data:
+                    st.markdown("### 📄 Research Papers")
+                    st.markdown(papers_data)
+        else:
+            st.info("👈 Enter a topic in the sidebar to view resources and generate ideas.")
+
+    except Exception as e:
+        st.error(f"An error occurred: {str(e)}")
+        st.info("Please check your API keys and try again.")
+
+    # Footer with clean styling
     st.markdown("---")
-    st.markdown("""
-    <div style='text-align: center; color: #6b7280;'>
-        Crafted with ❤️ using 
-        <strong style='color: #3b82f6;'>Streamlit</strong> | 
-        <strong style='color: #7c3aed;'>LangChain</strong> | 
-        <strong style='color: #10b981;'>Groq LLM</strong>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("Built with ❤️ using **Streamlit**, **LangChain**, and **Groq LLM**")
 
 if __name__ == "__main__":
     main()

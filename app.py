@@ -350,8 +350,7 @@ def main():
             st.info("👈 Input exploration vector to activate CyberForge")
 
     except Exception as e:
-        st.error(f"🚨 System Anomaly Detected: {str(e)}")
-        st.info("Verify system configurations and reinitialize")
+        continue
 
     # Footer with cyberpunk flair
     st.markdown("---")

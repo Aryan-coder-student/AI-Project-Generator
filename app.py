@@ -6,9 +6,9 @@ from langchain_groq import ChatGroq
 from langchain.prompts import PromptTemplate
 import requests
 from typing import Optional
+import base64
 
 load_dotenv()
-serpapi_data = {}
 
 class ProjectIdeaGenerator:
     def __init__(self):
@@ -140,47 +140,125 @@ class ProjectIdeaGenerator:
             st.error(f"Error generating ideas: {str(e)}")
             return None
 
+def get_base64_of_bin_file(bin_file):
+    """Convert image to base64"""
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+def set_background(png_file):
+    """Set background image for Streamlit app"""
+    bin_str = get_base64_of_bin_file(png_file)
+    page_bg_img = '''
+    <style>
+    .stApp {
+        background-image: url("data:image/png;base64,%s");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    </style>
+    ''' % bin_str
+    st.markdown(page_bg_img, unsafe_allow_html=True)
+
 def main():
     # Page Configuration
     st.set_page_config(
-        page_title="AI Project Idea Generator",
+        page_title="InnoVate: AI Project Idea Generator",
         page_icon="🚀",
         layout="wide",
+        initial_sidebar_state="expanded"
     )
 
-    # Application Header
-    st.title("🚀 AI Project Idea Generator")
+    # Optional Background (comment out if no background image)
+    # Ensure you have a background image file in your project directory
+    # set_background('background.png')  # Uncomment and add your background image
+
+    # Custom CSS for enhanced styling
     st.markdown("""
-        Welcome to the **AI Project Idea Generator**!  
-        This tool leverages AI to help you discover innovative and practical project ideas based on your topic of interest.  
-    """)
+    <style>
+    .big-font {
+        font-size:20px !important;
+        font-weight: bold;
+        color: #2C3E50;
+    }
+    .stButton>button {
+        color: white;
+        background-color: #3498DB;
+        transition: all 0.3s ease;
+    }
+    .stButton>button:hover {
+        background-color: #2980B9;
+        transform: scale(1.05);
+    }
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 10px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        white-space: nowrap;
+        background-color: #ECF0F1;
+        color: #2C3E50;
+        border-radius: 10px;
+        padding: 10px;
+        font-weight: bold;
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        background-color: #3498DB;
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Application Header with enhanced styling
+    st.markdown("<h1 style='text-align: center; color: #2C3E50;'>🚀 InnoVate: AI Project Idea Generator</h1>", unsafe_allow_html=True)
+    st.markdown("""
+        <p style='text-align: center; color: #7F8C8D;'>
+        Unlock innovative project ideas powered by AI, web research, and academic insights.
+        </p>
+    """, unsafe_allow_html=True)
 
     try:
         generator = ProjectIdeaGenerator()
 
-        # Sidebar Inputs with enhanced styling
+        # Sidebar with enhanced styling
         with st.sidebar:
-            st.header("🔧 Configuration")
+            st.header("🔧 Project Configuration")
+            
+            # Topic input with placeholder and helper text
             topic = st.text_area(
-                "Enter your topic of interest:",
+                "Topic of Interest",
                 placeholder="e.g., AI for sustainable agriculture, healthcare innovation",
-                height=120,
-                label_visibility="collapsed"
+                help="Enter a broad or specific topic to generate project ideas",
+                height=150
             )
-            number_of_projects = st.slider("Number of project ideas:", 1, 10, 5)
-            project_complexity = st.select_slider(
-                "Project Complexity Level:",
-                options=["Beginner", "Intermediate", "Advanced"],
-                value="Intermediate"
-            )
-            generate_button = st.button("Generate Ideas 🎯")
+            
+            # Advanced configuration with tooltips
+            col1, col2 = st.columns(2)
+            with col1:
+                number_of_projects = st.slider(
+                    "Number of Ideas", 1, 10, 5, 
+                    help="Select how many project ideas you want to generate"
+                )
+            
+            with col2:
+                project_complexity = st.selectbox(
+                    "Complexity Level",
+                    ["Beginner", "Intermediate", "Advanced"],
+                    index=1,
+                    help="Choose the technical complexity of project ideas"
+                )
+            
+            # Stylized generate button
+            generate_button = st.button("🎯 Generate Ideas", use_container_width=True)
 
+        # Main content area with tabs
         if topic:
-            tab1, tab2 = st.tabs(["💡 Project Ideas", "📚 Resources"])
+            tab1, tab2, tab3 = st.tabs(["💡 Project Ideas", "🔍 Research Insights", "📋 Instructions"])
             
             with tab1:
                 if generate_button:
-                    with st.spinner("Generating ideas..."):
+                    with st.spinner("🧠 Generating innovative project ideas..."):
                         serpapi_data = ProjectIdeaGenerator.fetch_related_info(topic, generator.serpapi_key)
                         papers_data = ProjectIdeaGenerator.fetch_paperswithcode_data(topic)
                         
@@ -193,38 +271,73 @@ def main():
                         )
                         
                         if result:
-                            st.subheader(f"🎯 Generated Project Ideas ({number_of_projects})")
+                            st.subheader(f"🚀 {number_of_projects} Unique Project Ideas")
                             st.markdown(result)
                             
+                            # Enhanced download button with icon
                             st.download_button(
-                                label="📥 Download Ideas",
+                                label="📥 Download Project Ideas",
                                 data=result,
-                                file_name="project_ideas.md",
-                                mime="text/markdown"
+                                file_name=f"{topic.replace(' ', '_')}_project_ideas.md",
+                                mime="text/markdown",
+                                use_container_width=True
                             )
                 else:
-                    st.info("👈 Enter a topic in the sidebar and click **'Generate Ideas'** to get started!")
+                    st.info("👈 Configure your project parameters in the sidebar and click 'Generate Ideas'!")
 
             with tab2:
-                st.subheader("📚 Research Resources")
+                st.subheader("🔬 Research Context")
                 
-                if serpapi_data:
-                    st.markdown("### 🔍 Web Research Results")
-                    st.markdown(f"```\n{serpapi_data}\n```")
+                col1, col2 = st.columns(2)
+                with col1:
+                    if serpapi_data:
+                        st.markdown("### 🌐 Web Research")
+                        st.code(serpapi_data, language="text")
                 
-                if papers_data:
-                    st.markdown("### 📄 Research Papers")
-                    st.markdown(papers_data)
+                with col2:
+                    if papers_data:
+                        st.markdown("### 📄 Academic Papers")
+                        st.markdown(papers_data)
+
+            with tab3:
+                st.markdown("""
+                ### 🎓 How to Use InnoVate
+
+                1. **Enter Topic**: 
+                   - Provide a broad or specific area of interest
+                   - Examples: "AI", "Sustainable Technology", "Healthcare Innovation"
+
+                2. **Configure Options**:
+                   - Choose number of project ideas
+                   - Select complexity level
+
+                3. **Generate Ideas**:
+                   - Click "Generate Ideas" button
+                   - AI generates unique, context-aware project briefs
+
+                4. **Explore Results**:
+                   - View project ideas in markdown format
+                   - Download ideas for later reference
+
+                #### Pro Tips:
+                - More specific topics yield more targeted ideas
+                - Experiment with different complexity levels
+                - Use research insights to refine your project concept
+                """)
         else:
-            st.info("👈 Enter a topic in the sidebar to view resources and generate ideas.")
+            st.info("👈 Enter a topic in the sidebar to explore project ideas!")
 
     except Exception as e:
-        st.error(f"An error occurred: {str(e)}")
+        st.error(f"🚨 An unexpected error occurred: {str(e)}")
         st.info("Please check your API keys and try again.")
 
-    # Footer with clean styling
+    # Footer with attribution
     st.markdown("---")
-    st.markdown("Built with ❤️ using **Streamlit**, **LangChain**, and **Groq LLM**")
+    st.markdown("""
+    <div style='text-align: center; color: #7F8C8D;'>
+    Built with ❤️ using Streamlit, LangChain, and Groq LLM
+    </div>
+    """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

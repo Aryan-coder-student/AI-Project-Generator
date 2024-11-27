@@ -143,101 +143,115 @@ class ProjectIdeaGenerator:
 def main():
     # Page Configuration
     st.set_page_config(
-        page_title="InnoVate: AI Project Idea Generator",
-        page_icon="🚀",
+        page_title="CyberForge: AI Project Idea Generator",
+        page_icon="🌐",
         layout="wide",
         initial_sidebar_state="expanded"
     )
 
-    # Custom Dark Theme CSS
+    # Cyberpunk-Inspired Custom CSS
     st.markdown("""
     <style>
-    /* Dark Theme Background */
+    /* Cyberpunk Background and Base Styling */
     .stApp {
-        background-color: #121212;
-        color: #E0E0E0;
+        background-color: #0A0A1A;
+        background-image: 
+            linear-gradient(rgba(10, 10, 26, 0.9), rgba(10, 10, 26, 0.9)),
+            repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.03) 0px, rgba(0, 255, 255, 0.03) 1px, transparent 1px, transparent 4px);
+        color: #00FFD4;
     }
 
     /* Sidebar Styling */
     [data-testid="stSidebar"] {
-        background-color: #1E1E1E;
+        background-color: #111127;
+        border-right: 2px solid #00FFD4;
     }
 
     /* Headings */
     h1, h2, h3, h4, h5, h6 {
-        color: #4CAF50 !important;
+        color: #00FFD4 !important;
+        text-shadow: 0 0 10px rgba(0, 255, 212, 0.5);
     }
 
-    /* Text Color */
+    /* Text Styling */
     .stMarkdown, .stTextArea, .stTextInput {
-        color: #E0E0E0 !important;
+        color: #00FFD4 !important;
     }
 
-    /* Button Styling */
+    /* Button Cyberpunk Styling */
     .stButton>button {
-        background-color: #4CAF50 !important;
+        background-color: #FF1493 !important;
         color: black !important;
-        border: none;
+        border: 2px solid #00FFD4 !important;
+        box-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
         transition: all 0.3s ease;
     }
     .stButton>button:hover {
-        background-color: #45a049 !important;
+        background-color: #00FFD4 !important;
+        color: #0A0A1A !important;
         transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 255, 212, 0.7);
     }
 
-    /* Tabs Styling */
+    /* Tabs Cyberpunk Styling */
     .stTabs [data-baseweb="tab-list"] {
-        background-color: #1E1E1E;
-        border-radius: 10px;
+        background-color: #111127;
+        border-bottom: 2px solid #00FFD4;
     }
     .stTabs [data-baseweb="tab"] {
-        background-color: #2C2C2C;
-        color: #4CAF50;
-        border-radius: 10px;
+        background-color: #0A0A1A;
+        color: #FF1493;
+        border: 2px solid #FF1493;
         margin: 5px;
         padding: 10px;
+        transition: all 0.3s ease;
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        background-color: #FF1493;
+        color: #0A0A1A;
     }
     .stTabs [data-baseweb="tab"][data-selected="true"] {
-        background-color: #4CAF50;
-        color: black;
+        background-color: #00FFD4;
+        color: #0A0A1A;
+        border-color: #00FFD4;
     }
 
-    /* Code Block Styling */
+    /* Code Block Cyberpunk Styling */
     .stCodeBlock {
-        background-color: #2C2C2C !important;
-        color: #E0E0E0 !important;
-        border: 1px solid #444 !important;
+        background-color: #111127 !important;
+        color: #00FFD4 !important;
+        border: 2px solid #FF1493 !important;
     }
 
     /* Info and Error Boxes */
     .stAlert {
-        background-color: #2C2C2C;
-        color: #E0E0E0;
-        border: 1px solid #4CAF50;
+        background-color: #111127;
+        color: #00FFD4;
+        border: 2px solid #FF1493;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # Application Header
-    st.markdown("<h1 style='text-align: center; color: #4CAF50;'>🚀 InnoVate: AI Project Idea Generator</h1>", unsafe_allow_html=True)
+    # Cyberpunk Header
+    st.markdown("<h1 style='text-align: center; color: #00FFD4; text-shadow: 0 0 10px rgba(0, 255, 212, 0.5);'>🌐 CyberForge: Project Nexus</h1>", unsafe_allow_html=True)
     st.markdown("""
-        <p style='text-align: center; color: #B0BEC5;'>
-        Unlock innovative project ideas powered by AI, web research, and academic insights.
+        <p style='text-align: center; color: #FF1493;'>
+        Synthesize Innovative Project Vectors | AI-Powered Idea Generation Matrix
         </p>
     """, unsafe_allow_html=True)
 
     try:
         generator = ProjectIdeaGenerator()
 
-        # Sidebar with dark theme
+        # Sidebar with cyberpunk theme
         with st.sidebar:
-            st.header("🔧 Project Configuration")
+            st.header("🔧 Project Configuration Node")
             
             # Topic input 
             topic = st.text_area(
-                "Topic of Interest",
-                placeholder="e.g., AI for sustainable agriculture, healthcare innovation",
-                help="Enter a broad or specific topic to generate project ideas",
+                "Input Exploration Vector",
+                placeholder="e.g., Quantum AI, Neuro-Augmented Systems",
+                help="Enter technological domain for project synthesis",
                 height=150
             )
             
@@ -245,28 +259,28 @@ def main():
             col1, col2 = st.columns(2)
             with col1:
                 number_of_projects = st.slider(
-                    "Number of Ideas", 1, 10, 5, 
-                    help="Select how many project ideas you want to generate"
+                    "Idea Generation Density", 1, 10, 5, 
+                    help="Calibrate project ideation intensity"
                 )
             
             with col2:
                 project_complexity = st.selectbox(
-                    "Complexity Level",
-                    ["Beginner", "Intermediate", "Advanced"],
+                    "Complexity Modulation",
+                    ["Novice Protocol", "Intermediate Sync", "Advanced Nexus"],
                     index=1,
-                    help="Choose the technical complexity of project ideas"
+                    help="Adjust technological complexity parameters"
                 )
             
             # Generate button
-            generate_button = st.button("🎯 Generate Ideas", use_container_width=True)
+            generate_button = st.button("🚀 Initialize Concept Generator", use_container_width=True)
 
         # Main content area
         if topic:
-            tab1, tab2, tab3 = st.tabs(["💡 Project Ideas", "🔍 Research Insights", "📋 Instructions"])
+            tab1, tab2, tab3 = st.tabs(["💡 Concept Matrices", "🔍 Data Streams", "📋 Operational Protocols"])
             
             with tab1:
                 if generate_button:
-                    with st.spinner("🧠 Generating innovative project ideas..."):
+                    with st.spinner("🌐 Synthesizing Innovative Project Vectors..."):
                         serpapi_data = ProjectIdeaGenerator.fetch_related_info(topic, generator.serpapi_key)
                         papers_data = ProjectIdeaGenerator.fetch_paperswithcode_data(topic)
                         
@@ -279,71 +293,71 @@ def main():
                         )
                         
                         if result:
-                            st.subheader(f"🚀 {number_of_projects} Unique Project Ideas")
+                            st.subheader(f"🚀 {number_of_projects} Concept Matrices Generated")
                             st.markdown(result)
                             
                             # Download button
                             st.download_button(
-                                label="📥 Download Project Ideas",
+                                label="💾 Export Concept Matrices",
                                 data=result,
-                                file_name=f"{topic.replace(' ', '_')}_project_ideas.md",
+                                file_name=f"cyberforge_{topic.replace(' ', '_')}_concepts.md",
                                 mime="text/markdown",
                                 use_container_width=True
                             )
                 else:
-                    st.info("👈 Configure your project parameters in the sidebar and click 'Generate Ideas'!")
+                    st.info("👈 Configure project parameters and initiate concept generation!")
 
             with tab2:
-                st.subheader("🔬 Research Context")
+                st.subheader("🌐 Information Streams")
                 
                 col1, col2 = st.columns(2)
                 with col1:
                     if serpapi_data:
-                        st.markdown("### 🌐 Web Research")
+                        st.markdown("### 📡 Web Data Nexus")
                         st.code(serpapi_data, language="text")
                 
                 with col2:
                     if papers_data:
-                        st.markdown("### 📄 Academic Papers")
+                        st.markdown("### 📄 Academic Transmission")
                         st.markdown(papers_data)
 
             with tab3:
                 st.markdown("""
-                ### 🎓 How to Use InnoVate
+                ### 🔬 CyberForge Operational Protocols
 
-                1. **Enter Topic**: 
-                   - Provide a broad or specific area of interest
-                   - Examples: "AI", "Sustainable Technology", "Healthcare Innovation"
+                1. **Input Vector**: 
+                   - Inject technological exploration domain
+                   - Exemplars: "Quantum Interfaces", "Neuro-Computational Systems"
 
-                2. **Configure Options**:
-                   - Choose number of project ideas
-                   - Select complexity level
+                2. **Configuration Calibration**:
+                   - Modulate project generation density
+                   - Adjust complexity synchronization level
 
-                3. **Generate Ideas**:
-                   - Click "Generate Ideas" button
-                   - AI generates unique, context-aware project briefs
+                3. **Concept Initialization**:
+                   - Activate "Concept Generator"
+                   - AI synthesizes unique project matrices
 
-                4. **Explore Results**:
-                   - View project ideas in markdown format
-                   - Download ideas for later reference
+                4. **Concept Exploration**:
+                   - Visualize generated project vectors
+                   - Export for further analysis
 
-                #### Pro Tips:
-                - More specific topics yield more targeted ideas
-                - Experiment with different complexity levels
-                - Use research insights to refine your project concept
+                #### Optimization Vectors:
+                - Precision in input increases conceptual fidelity
+                - Experiment with complexity modulation
+                - Leverage data streams for refined ideation
                 """)
         else:
-            st.info("👈 Enter a topic in the sidebar to explore project ideas!")
+            st.info("👈 Input exploration vector to activate CyberForge")
 
     except Exception as e:
-        st.error(f"🚨 An unexpected error occurred: {str(e)}")
-        st.info("Please check your API keys and try again.")
+        st.error(f"🚨 System Anomaly Detected: {str(e)}")
+        st.info("Verify system configurations and reinitialize")
 
-    # Footer
+    # Footer with cyberpunk flair
     st.markdown("---")
     st.markdown("""
-    <div style='text-align: center; color: #B0BEC5;'>
-    Built with ❤️ using Streamlit, LangChain, and Groq LLM
+    <div style='text-align: center; color: #FF1493;'>
+    Engineered in the Quantum Realm | Streamlit • LangChain • Groq Neural Network
     </div>
     """, unsafe_allow_html=True)
 

@@ -140,27 +140,6 @@ class ProjectIdeaGenerator:
             st.error(f"Error generating ideas: {str(e)}")
             return None
 
-def get_base64_of_bin_file(bin_file):
-    """Convert image to base64"""
-    with open(bin_file, 'rb') as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
-
-def set_background(png_file):
-    """Set background image for Streamlit app"""
-    bin_str = get_base64_of_bin_file(png_file)
-    page_bg_img = '''
-    <style>
-    .stApp {
-        background-image: url("data:image/png;base64,%s");
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-    </style>
-    ''' % bin_str
-    st.markdown(page_bg_img, unsafe_allow_html=True)
-
 def main():
     # Page Configuration
     st.set_page_config(
@@ -170,50 +149,79 @@ def main():
         initial_sidebar_state="expanded"
     )
 
-    # Optional Background (comment out if no background image)
-    # Ensure you have a background image file in your project directory
-    # set_background('background.png')  # Uncomment and add your background image
-
-    # Custom CSS for enhanced styling
+    # Custom Dark Theme CSS
     st.markdown("""
     <style>
-    .big-font {
-        font-size:20px !important;
-        font-weight: bold;
-        color: #2C3E50;
+    /* Dark Theme Background */
+    .stApp {
+        background-color: #121212;
+        color: #E0E0E0;
     }
+
+    /* Sidebar Styling */
+    [data-testid="stSidebar"] {
+        background-color: #1E1E1E;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4, h5, h6 {
+        color: #4CAF50 !important;
+    }
+
+    /* Text Color */
+    .stMarkdown, .stTextArea, .stTextInput {
+        color: #E0E0E0 !important;
+    }
+
+    /* Button Styling */
     .stButton>button {
-        color: white;
-        background-color: #3498DB;
+        background-color: #4CAF50 !important;
+        color: black !important;
+        border: none;
         transition: all 0.3s ease;
     }
     .stButton>button:hover {
-        background-color: #2980B9;
+        background-color: #45a049 !important;
         transform: scale(1.05);
     }
+
+    /* Tabs Styling */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
+        background-color: #1E1E1E;
+        border-radius: 10px;
     }
     .stTabs [data-baseweb="tab"] {
-        height: 50px;
-        white-space: nowrap;
-        background-color: #ECF0F1;
-        color: #2C3E50;
+        background-color: #2C2C2C;
+        color: #4CAF50;
         border-radius: 10px;
+        margin: 5px;
         padding: 10px;
-        font-weight: bold;
     }
-    .stTabs [data-baseweb="tab"]:hover {
-        background-color: #3498DB;
-        color: white;
+    .stTabs [data-baseweb="tab"][data-selected="true"] {
+        background-color: #4CAF50;
+        color: black;
+    }
+
+    /* Code Block Styling */
+    .stCodeBlock {
+        background-color: #2C2C2C !important;
+        color: #E0E0E0 !important;
+        border: 1px solid #444 !important;
+    }
+
+    /* Info and Error Boxes */
+    .stAlert {
+        background-color: #2C2C2C;
+        color: #E0E0E0;
+        border: 1px solid #4CAF50;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # Application Header with enhanced styling
-    st.markdown("<h1 style='text-align: center; color: #2C3E50;'>🚀 InnoVate: AI Project Idea Generator</h1>", unsafe_allow_html=True)
+    # Application Header
+    st.markdown("<h1 style='text-align: center; color: #4CAF50;'>🚀 InnoVate: AI Project Idea Generator</h1>", unsafe_allow_html=True)
     st.markdown("""
-        <p style='text-align: center; color: #7F8C8D;'>
+        <p style='text-align: center; color: #B0BEC5;'>
         Unlock innovative project ideas powered by AI, web research, and academic insights.
         </p>
     """, unsafe_allow_html=True)
@@ -221,11 +229,11 @@ def main():
     try:
         generator = ProjectIdeaGenerator()
 
-        # Sidebar with enhanced styling
+        # Sidebar with dark theme
         with st.sidebar:
             st.header("🔧 Project Configuration")
             
-            # Topic input with placeholder and helper text
+            # Topic input 
             topic = st.text_area(
                 "Topic of Interest",
                 placeholder="e.g., AI for sustainable agriculture, healthcare innovation",
@@ -233,7 +241,7 @@ def main():
                 height=150
             )
             
-            # Advanced configuration with tooltips
+            # Configuration columns
             col1, col2 = st.columns(2)
             with col1:
                 number_of_projects = st.slider(
@@ -249,10 +257,10 @@ def main():
                     help="Choose the technical complexity of project ideas"
                 )
             
-            # Stylized generate button
+            # Generate button
             generate_button = st.button("🎯 Generate Ideas", use_container_width=True)
 
-        # Main content area with tabs
+        # Main content area
         if topic:
             tab1, tab2, tab3 = st.tabs(["💡 Project Ideas", "🔍 Research Insights", "📋 Instructions"])
             
@@ -274,7 +282,7 @@ def main():
                             st.subheader(f"🚀 {number_of_projects} Unique Project Ideas")
                             st.markdown(result)
                             
-                            # Enhanced download button with icon
+                            # Download button
                             st.download_button(
                                 label="📥 Download Project Ideas",
                                 data=result,
@@ -331,10 +339,10 @@ def main():
         st.error(f"🚨 An unexpected error occurred: {str(e)}")
         st.info("Please check your API keys and try again.")
 
-    # Footer with attribution
+    # Footer
     st.markdown("---")
     st.markdown("""
-    <div style='text-align: center; color: #7F8C8D;'>
+    <div style='text-align: center; color: #B0BEC5;'>
     Built with ❤️ using Streamlit, LangChain, and Groq LLM
     </div>
     """, unsafe_allow_html=True)

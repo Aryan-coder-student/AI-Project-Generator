@@ -86,7 +86,7 @@ class ProjectIdeaGenerator:
             You are an AI-powered freelance client simulation generator.
             
             🎯 Objective: Generate unique project briefs for the topic "{topic}"
-            
+            from the given context.
             ## Generation Parameters
             - Complexity Level: {complexity}
             - Number of Projects: {num_projects}

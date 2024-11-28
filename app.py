@@ -122,8 +122,7 @@ class ProjectIdeaGenerator:
             - Preferred technological approach
             
             ## Output: 
-            - output in proper heading , subheading ,points.Like project heading should be in different fontsize and of same size of each project. 
-            - ouput in only in markdown 
+            - Output in proper heading , subheading ,points , like project heading should be in heading format 
             - Add A divider after every project
             """
         )

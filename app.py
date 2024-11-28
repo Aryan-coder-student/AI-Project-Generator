@@ -97,10 +97,6 @@ class ProjectIdeaGenerator:
             </context>
             ## Output Project Brief Requirements
             
-            ### 1. Descriptive Title
-            - Format: Markdown Heading (H2)
-            - Capture project essence concisely
-            
             ### 2. Problem Statement
             - Written in authentic client voice
             - Include:

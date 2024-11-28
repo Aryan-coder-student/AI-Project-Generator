@@ -96,7 +96,8 @@ class ProjectIdeaGenerator:
             2. **Academic Research Papers**: {papers_data}
             </context>
             ## Output Project Brief Requirements
-            
+            ### 1 Title Ouput
+            - Heading (h1)
             ### 2. Problem Statement
             - Written in authentic client voice
             - Include:

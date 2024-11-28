@@ -122,7 +122,7 @@ class ProjectIdeaGenerator:
             - Preferred technological approach
             
             ## Output: 
-            - output in proper heading , subheading ,points , like project title should be in proper haeding , in Italic and differetn font 
+            - output in proper heading , subheading ,points , like project title should be in proper haeding  different fontsize 
             - make sub heading in indentations 
             - ouput in only in markdown 
             - Add A divider after every project

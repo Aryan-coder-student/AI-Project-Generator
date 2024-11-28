@@ -111,9 +111,6 @@ API Keys for SerpAPI and Groq
 - [SerpAPI](https://serpapi.com/) - Web research integration
 - [Papers with Code](https://paperswithcode.com/) - Academic resources
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 

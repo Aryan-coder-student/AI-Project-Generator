@@ -91,10 +91,10 @@ class ProjectIdeaGenerator:
             - Complexity Level: {complexity}
             - Number of Projects: {num_projects}
             
-            ## Context Sources
+            <context>
             1. **Web Research Context**: {serpapi_data}
             2. **Academic Research Papers**: {papers_data}
-            
+            </context>
             ## Project Brief Requirements
             
             ### 1. Descriptive Title

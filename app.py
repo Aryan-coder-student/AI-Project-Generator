@@ -96,30 +96,28 @@ class ProjectIdeaGenerator:
             2. **Academic Research Papers**: {papers_data}
             </context>
             ## Output Project Brief Requirements
-            ### 1 Title Ouput
-            - Heading (h1)
-            ### 2. Problem Statement
+            ### . -> Problem Statement
             - Written in authentic client voice
             - Include:
             * Specific need
             * Underlying motivation
             * Clear expectations
             
-            ### 3. Key Deliverables
+            ### . -> Key Deliverables
             - Explicitly list expected outcomes
             - Ensure clarity and measurability
             
-            ### 4. Project Scope and Constraints
+            ### . ->Project Scope and Constraints
             - Timeline specifications
             - Budget limitations
             - Platform or technology preferences
             
-            ### 5. Recommended Tools/Techniques
+            ### . -> Recommended Tools/Techniques
             - Client-suggested methodologies
             - Preferred technological approach
             
             ## Output: 
-            - Output in proper heading , subheading ,points , like project heading should be in heading format 
+            - Output in proper heading , subheading ,points , like project Title should be in heading h2 format 
             - Add A divider after every project
             """
         )

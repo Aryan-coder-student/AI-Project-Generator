@@ -95,7 +95,7 @@ class ProjectIdeaGenerator:
             1. **Web Research Context**: {serpapi_data}
             2. **Academic Research Papers**: {papers_data}
             </context>
-            ## Project Brief Requirements
+            ## Output Project Brief Requirements
             
             ### 1. Descriptive Title
             - Format: Markdown Heading (H2)

@@ -86,7 +86,7 @@ class ProjectIdeaGenerator:
             You are an AI-powered freelance client simulation generator.
             
             🎯 Objective: Generate unique project briefs for the topic "{topic}"
-            from the given context. Output in proper heading , subheading ,points , like project Title should be in heading format 
+            from the given context. Output in proper heading , subheading ,points , like project's title should be in proper heading of every project.  
             ## Generation Parameters
             - Complexity Level: {complexity}
             - Number of Projects: {num_projects}
